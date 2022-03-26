@@ -30,8 +30,8 @@ function PlanPage() {
       </div>
 
       <div className="flex flex-col md:flex-row">
-        <div className="max-w-[576px] md:ml-24">
-          <section className="flex flex-col bg-[#F7F8FC] md:bg-white px-8">
+        <div className="max-w-[576px] md:px-24">
+          <section className="px-8 md:px-0 flex flex-col bg-[#F7F8FC] md:bg-white">
             <div className="mt-10">
               <h1 className="text-[28px] leading-9 tracking-[-0.6px]">
                 <span className="hidden md:block">
@@ -44,7 +44,7 @@ function PlanPage() {
               </p>
             </div>
 
-            <div className="bg-white flex flex-row justify-between mb-14 max-w-[384px] rounded-xl md:[border:_3px_solid_#F0F2FA]">
+            <div className="bg-white flex flex-row justify-between mb-14  rounded-xl md:[border:_3px_solid_#F0F2FA]">
               <div className="pt-11 pl-6 pb-9">
                 <span className="font-['Roboto'] text-xs leading-5 tracking-[0.2px] text-[#A3ABCC]">
                   Placa: C2U-114
@@ -60,7 +60,7 @@ function PlanPage() {
             </div>
           </section>
 
-          <section className="px-8 flex flex-col md:flex-row md:justify-between">
+          <section className="px-8 md:px-0 flex flex-col md:flex-row md:justify-between">
             <div className="mt-11 md:mt-0">
               <h3 className="text-base leading-6 tracking-[0.2px] text-[#494F66]">
                 Indica la suma asegurada
@@ -79,8 +79,8 @@ function PlanPage() {
             </div>
           </section>
 
-          <section>
-            <h2 className="px-8 mt-9 mb-10">Agrega o quita coberturas</h2>
+          <section className="px-8 md:px-0">
+            <h2 className="mt-9 mb-10">Agrega o quita coberturas</h2>
 
             <ul className="flex flex-row items-center">
               <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#EF3340] uppercase border-b-2 pb-6 border-red-500">
@@ -96,7 +96,7 @@ function PlanPage() {
               </li>
             </ul>
 
-            <section className="px-8 pt-9 pb-2 border-b">
+            <section className=" pt-9 pb-2 border-b">
               <div className="flex flex-row gap-5">
                 <img
                   src="/recursos/pages/plan/llanta_robada_rimac.svg"
@@ -126,7 +126,7 @@ function PlanPage() {
               </div>
             </section>
 
-            <section className="px-8 pt-9  pb-2 border-b">
+            <section className=" pt-9  pb-2 border-b">
               <div className="flex flex-row gap-5">
                 <img
                   src="/recursos/pages/plan/icon_choque_rimac.svg"
@@ -149,7 +149,7 @@ function PlanPage() {
               </div>
             </section>
 
-            <section className="px-8 pt-9  pb-2 border-b">
+            <section className=" pt-9  pb-2 border-b">
               <div className="flex flex-row gap-5">
                 <img
                   src="/recursos/pages/plan/icon_atropello_rimac.svg"
@@ -175,14 +175,36 @@ function PlanPage() {
         </div>
 
         <div>
-          <section className="mt-28 mb-4 mx-8 flex flex-row justify-between bg-white">
-            <div>
-              <p>$35.00</p>
-              <span>MENSUAL</span>
+          <section className="mt-28 mb-4 mx-8 flex flex-row md:flex-col justify-between bg-white">
+            <div className="flex flex-col md:pb-5 md:border-b md:border-[#E4E8F7]">
+              <h3 className="hidden text-xs leading-4 tracking-[0.6px] font-bold md:block uppercase">
+                monto
+              </h3>
+              <p className="text-[28px]">$35.00</p>
+              <span className="uppercase md:lowercase text-[#676F8F]">
+                mensuales
+              </span>
+            </div>
+
+            <div className="hidden md:block mt-6 mb-8">
+              <p className="text-base leading-6 text-[#494F66] mb-3">
+                El precio incluye:
+              </p>
+              <ul className="flex flex-col gap-2">
+                <li>
+                  <span className="text-[#43B748]">✓ </span>Llanta de respuesto
+                </li>
+                <li>
+                  <span className="text-[#43B748]">✓ </span>Analisis de motor
+                </li>
+                <li>
+                  <span className="text-[#43B748]">✓ </span>Aros gratis
+                </li>
+              </ul>
             </div>
 
             <div>
-              <button className="bg-[#EF3340] rounded-md py-[14px] px-4 uppercase text-white">
+              <button className="bg-[#EF3340] md:w-full rounded-md py-[14px] px-4 uppercase text-white">
                 lo quiero{" "}
               </button>
             </div>
