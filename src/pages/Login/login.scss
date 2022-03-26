@@ -1,0 +1,116 @@
+.container-formlogin {
+  margin-top: 24px;
+
+  &__inputs {
+    margin-bottom: 16px;
+
+    &_element {
+      margin-bottom: 16px;
+
+      .container-selectinput {
+        display: flex;
+
+        .input-field {
+          position: relative;
+          margin-top: 0px;
+        }
+
+        .select {
+          width: 90px;
+          > select {
+            transition: all 0.3s;
+            padding: 0 16px;
+            border-radius: 4px 0 0 4px;
+            border-right: none;
+            outline: none;
+            color: #494f66;
+            width: 90px;
+          }
+        }
+
+        .input-custom {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+  }
+}
+
+.input-field {
+  position: relative;
+  margin-top: 0px;
+  width: 100%;
+}
+
+.input-field select {
+  width: 100%;
+  height: 56px;
+  line-height: 58px;
+  border: solid 1px #d4d5e8;
+  border-radius: 4px;
+  color: #a9b1d1;
+  font-size: 16px;
+  padding-left: 10px;
+}
+
+.input-field input[type="text"],
+.input-field input[type="email"],
+.input-field input[type="number"],
+.input-field input[type="password"] {
+  color: #494f66;
+  border: solid 1px #d4d5e8;
+  width: 100%;
+  height: 56px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-radius: 4px;
+  outline: none;
+  font-size: 16px;
+  box-shadow: none;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s, border 0.3s;
+  /*text-transform: uppercase;*/
+}
+
+/* */
+
+.container-formlogin__checkboxs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 300;
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+
+  color: #676f8f;
+
+  input {
+    width: 20px;
+    height: 20px;
+    accent-color: hsl(131deg 30% 46%);
+    clip-path: circle(60% at 50% 50%);
+    margin-right: 12px;
+  }
+}
+
+/**/
+
+.container-formlogin_submit {
+  margin-top: 52px;
+  width: 100%;
+  padding: 20px 32px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: white;
+  background: #ef3340;
+  border-radius: 8px;
+}
