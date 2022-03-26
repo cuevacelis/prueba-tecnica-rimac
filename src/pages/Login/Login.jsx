@@ -1,10 +1,12 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
+import { UserContext } from "contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import "./login.scss";
 
 function LoginPage() {
+  const contextUser = useContext(UserContext);
   let navigate = useNavigate();
   const codeKeyDownPlaque = useRef(null);
 
@@ -25,8 +27,6 @@ function LoginPage() {
   });
 
   const fetchDataForm = async (data) => {
-    console.log(data);
-
     const response = await fetch(
       "https://jsonplaceholder.typicode.com/users/1",
       {
@@ -36,7 +36,7 @@ function LoginPage() {
     );
     const resp = await response.json();
     const res = { ...resp, ...data };
-    sessionStorage.setItem("data", JSON.stringify(res));
+    contextUser.setData(res);
     navigate(`/plan`);
   };
 
@@ -55,12 +55,11 @@ function LoginPage() {
   return (
     <section className="flex flex-col md:flex-row md:justify-between">
       <Helmet>
-        <title>Seguro vehicular | RIMAC SEGUROS</title>
+        <title>Login | RIMAC SEGUROS</title>
       </Helmet>
 
-      <div className="w-full flex flex-col items-center  md:max-w-[535px]">
+      <div className="w-full flex flex-col items-center md:max-w-[535px]">
         <aside className="absolute top-0 left-0 w-full h-[308px] -z-10 bg-cover bg-[#f7f8fc] md:max-w-[535px] md:h-full md:bg-[url('./assets/pages/login/background_desktop_rimac.svg')]"></aside>
-
         <img
           className="hidden md:block w-80 h-[250px] mt-14"
           src="/recursos/pages/login/home_desktop_rimac.svg"
@@ -97,13 +96,14 @@ function LoginPage() {
             Déjanos tus datos
           </h2>
 
-          <form
-            className="container-formlogin"
-            onSubmit={handleSubmitLogin(fetchDataForm)}
-          >
-            <section className="container-formlogin__inputs">
-              <div className="container-formlogin__inputs_element">
-                <section className="container-selectinput">
+          <form className="login" onSubmit={handleSubmitLogin(fetchDataForm)}>
+            <section className="login__inputs">
+              <div className="login__inputs_element">
+                <section
+                  className={`container-selectinput ${
+                    errorsLogin?.dni && "border border-red-500 rounded-md"
+                  }`}
+                >
                   <div className="input-field select">
                     <select className="customSelect" name="documentSelected">
                       <option>DNI</option>
@@ -141,8 +141,12 @@ function LoginPage() {
                 )}
               </div>
 
-              <section className="container-formlogin__inputs_element">
-                <div className="input-field ">
+              <section className="login__inputs_element">
+                <div
+                  className={`input-field ${
+                    errorsLogin?.phone && "border border-red-500 rounded-md"
+                  }`}
+                >
                   <input
                     autoComplete="false"
                     type="number"
@@ -170,8 +174,12 @@ function LoginPage() {
                 )}
               </section>
 
-              <section className="container-formlogin__inputs_element">
-                <div className="input-field">
+              <section className="login__inputs_element">
+                <div
+                  className={`input-field ${
+                    errorsLogin?.plaque && "border border-red-500 rounded-md"
+                  }`}
+                >
                   <input
                     type="text"
                     maxLength="7"
@@ -203,33 +211,50 @@ function LoginPage() {
               </section>
             </section>
 
-            <section className="container-formlogin__checkboxs">
-              <div>
-                <input type="checkbox" defaultChecked={true} />
+            <section>
+              <div className="login__checkbox">
+                <input
+                  type="checkbox"
+                  defaultChecked={true}
+                  {...registerLogin("terms", {
+                    required: {
+                      value: true,
+                      message: "*Acepte la política de privacidad.",
+                    },
+                  })}
+                />
+                <p>
+                  Acepto la{" "}
+                  <a
+                    className="underline"
+                    target="_blank"
+                    href="https://www.rimac.com/politica-privacidad"
+                    rel="noreferrer"
+                  >
+                    Política de Protecciòn de Datos Personales
+                  </a>{" "}
+                  y los{" "}
+                  <a
+                    className="underline"
+                    target="_blank"
+                    href="https://www.rimac.com/politica-privacidad"
+                    rel="noreferrer"
+                  >
+                    Términos y Condiciones.
+                  </a>
+                </p>
               </div>
-              <p>
-                Acepto la{" "}
-                <a
-                  className="underline"
-                  target="_blank"
-                  href="https://www.rimac.com/politica-privacidad"
-                  rel="noreferrer"
-                >
-                  Política de Protecciòn de Datos Personales
-                </a>{" "}
-                y los{" "}
-                <a
-                  className="underline"
-                  target="_blank"
-                  href="https://www.rimac.com/politica-privacidad"
-                  rel="noreferrer"
-                >
-                  Términos y Condiciones.
-                </a>
-              </p>
+
+              <div>
+                {errorsLogin?.terms && (
+                  <p className="font-light text-red-500">
+                    {errorsLogin.terms.message}
+                  </p>
+                )}
+              </div>
             </section>
 
-            <button type="submit" className="container-formlogin_submit">
+            <button type="submit" className="login_submit">
               cotízalo
             </button>
           </form>

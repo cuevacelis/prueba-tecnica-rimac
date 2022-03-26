@@ -1,12 +1,90 @@
+import { useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "contexts/UserContext";
 import { ReactComponent as ArrowLeft } from "assets/pages/plan/arrow_left.svg";
 import { ReactComponent as ArrowUp } from "assets/pages/plan/arrow_up.svg";
 import { ReactComponent as ArrowDown } from "assets/pages/plan/arrow_down.svg";
 import { ReactComponent as IconOne } from "assets/pages/plan/one.svg";
 import { ReactComponent as IconTwo } from "assets/pages/plan/two.svg";
+import { ReactComponent as IconAdd } from "assets/pages/plan/add.svg";
+import { ReactComponent as IconSubstract } from "assets/pages/plan/substract.svg";
 import { Switch } from "@nextui-org/react";
-import "./plan.scss";
 
 function PlanPage() {
+  const contextUser = useContext(UserContext);
+  let navigate = useNavigate();
+  const [sumaAsegurada, setSumaAsegurada] = useState(14300);
+  const [montoTotal, setMontoTotal] = useState(35);
+  const refSwitchLlanta = useRef(true);
+  const refSwitchChoque = useRef(false);
+  const refSwitchAtropello = useRef(false);
+
+  const formatNumberToDollar = (number, fractionsDigits) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: fractionsDigits,
+    }).format(number);
+  };
+
+  const validateSwitchToque = () => {
+    if (refSwitchChoque.current) {
+      setMontoTotal(montoTotal - 20);
+      refSwitchChoque.current = false;
+    }
+  };
+
+  const substractSumaAgregada = () => {
+    if (sumaAsegurada > 12500) {
+      setSumaAsegurada(sumaAsegurada - 100);
+    }
+  };
+
+  const addSumaAgregada = () => {
+    if (sumaAsegurada < 16500) {
+      setSumaAsegurada(sumaAsegurada + 100);
+      if (sumaAsegurada >= 16000) {
+        validateSwitchToque();
+      }
+    }
+  };
+
+  const changeLLantaRobada = (e) => {
+    if (e.target.checked) {
+      refSwitchLlanta.current = true;
+      setMontoTotal(montoTotal + 15);
+    } else {
+      refSwitchLlanta.current = false;
+      setMontoTotal(montoTotal - 15);
+    }
+  };
+
+  const changeChoque = (e) => {
+    if (e.target.checked) {
+      refSwitchChoque.current = true;
+      setMontoTotal(montoTotal + 20);
+    } else {
+      refSwitchChoque.current = false;
+      setMontoTotal(montoTotal - 20);
+    }
+  };
+
+  const changeAtropello = (e) => {
+    if (e.target.checked) {
+      refSwitchAtropello.current = true;
+      setMontoTotal(montoTotal + 50);
+    } else {
+      refSwitchAtropello.current = true;
+      setMontoTotal(montoTotal - 50);
+    }
+  };
+
+  const formMonto = () => {
+    const newData = { ...contextUser.data, ...{ monto: montoTotal } };
+    contextUser.setData(newData);
+    navigate(`/thanks`);
+  };
+
   return (
     <section className="flex flex-col md:flex-row">
       <div className="md:bg-[#F7F8FC]">
@@ -35,7 +113,14 @@ function PlanPage() {
             <div className="mt-10">
               <h1 className="text-[28px] leading-9 tracking-[-0.6px]">
                 <span className="hidden md:block">
-                  ¡Hola, <span>Juan!</span>
+                  ¡Hola,{" "}
+                  <span className="text-red-500">
+                    {`${
+                      contextUser?.data?.name &&
+                      contextUser?.data?.name.split(" ")[0]
+                    } `}
+                    !
+                  </span>
                 </span>
                 <span className="md:hidden">Mira las coberturas</span>
               </h1>
@@ -47,7 +132,7 @@ function PlanPage() {
             <div className="bg-white flex flex-row justify-between mb-14  rounded-xl md:[border:_3px_solid_#F0F2FA]">
               <div className="pt-11 pl-6 pb-9">
                 <span className="font-['Roboto'] text-xs leading-5 tracking-[0.2px] text-[#A3ABCC]">
-                  Placa: C2U-114
+                  {`Placa: ${contextUser?.data?.plaque} `}
                 </span>
                 <h2 className="text-base leading-6 tracking-[0.2px] text-[#494F66]">
                   Wolkswagen 2019 <br /> Golf
@@ -71,11 +156,15 @@ function PlanPage() {
             </div>
 
             <div className="rounded-lg min-w-[160px] h-14 flex flex-row justify-between items-center px-[19px] mt-4 md:mt-0 bg-white border border-solid border-[#C5CBE0] box-border">
-              <span>-</span>
-              <span className="text-base leading-6 text-[#494F66] py-4">
-                $14.300
+              <span onClick={substractSumaAgregada}>
+                <IconSubstract />
               </span>
-              <span>+</span>
+              <span className="text-base leading-6 text-[#494F66] py-4">
+                {formatNumberToDollar(sumaAsegurada, 0)}
+              </span>
+              <span onClick={addSumaAgregada}>
+                <IconAdd />
+              </span>
             </div>
           </section>
 
@@ -103,9 +192,13 @@ function PlanPage() {
                   alt="llanta robada rimac"
                 ></img>
                 <div className="flex flex-row flex-1 justify-between">
-                  <p>Llanta tobada</p>
-
-                  <Switch shadow color="success" checked={true} />
+                  <p>Llanta robada</p>
+                  <Switch
+                    shadow
+                    color="success"
+                    checked={refSwitchLlanta.current}
+                    onChange={changeLLantaRobada}
+                  />
                 </div>
               </div>
               <div className="pl-16 mb-4">
@@ -126,39 +219,50 @@ function PlanPage() {
               </div>
             </section>
 
-            <section className=" pt-9  pb-2 border-b">
-              <div className="flex flex-row gap-5">
-                <img
-                  src="/recursos/pages/plan/icon_choque_rimac.svg"
-                  alt="llanta robada rimac"
-                ></img>
-                <div className="flex flex-row flex-1 justify-between">
-                  <p> Choque y/o pasarte la luz roja </p>
-
-                  <Switch shadow color="success" checked={true} />
+            {sumaAsegurada <= 16000 && (
+              <section className=" pt-9  pb-2 border-b">
+                <div className="flex flex-row gap-5">
+                  <img
+                    src="/recursos/pages/plan/icon_choque_rimac.svg"
+                    alt="choque rimac"
+                  ></img>
+                  <div className="flex flex-row flex-1 justify-between">
+                    <p> Choque y/o pasarte la luz roja </p>
+                    <Switch
+                      shadow
+                      color="success"
+                      checked={refSwitchChoque.current}
+                      onChange={changeChoque}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="pl-16 mb-4">
-                <p className="text-sm leading-6 text-[#676F8F]"></p>
-              </div>
-              <div className="pl-16 flex flex-row items-center gap-3 md:hidden">
-                <p className="text-[10px] leading-4 tracking-[0.8px] uppercase text-[#A3ABCC]">
-                  Ver más
-                </p>
-                <ArrowDown />
-              </div>
-            </section>
+                <div className="pl-16 mb-4">
+                  <p className="text-sm leading-6 text-[#676F8F]"></p>
+                </div>
+                <div className="pl-16 flex flex-row items-center gap-3 md:hidden">
+                  <p className="text-[10px] leading-4 tracking-[0.8px] uppercase text-[#A3ABCC]">
+                    Ver más
+                  </p>
+                  <ArrowDown />
+                </div>
+              </section>
+            )}
 
             <section className=" pt-9  pb-2 border-b">
               <div className="flex flex-row gap-5">
                 <img
                   src="/recursos/pages/plan/icon_atropello_rimac.svg"
-                  alt="llanta robada rimac"
+                  alt="atropello rimac"
                 ></img>
                 <div className="flex flex-row flex-1 justify-between">
                   <p> Atropello en la vía Evitamiento </p>
 
-                  <Switch shadow color="success" checked={true} />
+                  <Switch
+                    shadow
+                    color="success"
+                    checked={refSwitchAtropello.current}
+                    onChange={changeAtropello}
+                  />
                 </div>
               </div>
               <div className="pl-16 mb-4">
@@ -180,7 +284,9 @@ function PlanPage() {
               <h3 className="hidden text-xs leading-4 tracking-[0.6px] font-bold md:block uppercase">
                 monto
               </h3>
-              <p className="text-[28px]">$35.00</p>
+              <p className="text-[28px]">
+                {formatNumberToDollar(montoTotal, 2)}
+              </p>
               <span className="uppercase md:lowercase text-[#676F8F]">
                 mensuales
               </span>
@@ -204,8 +310,11 @@ function PlanPage() {
             </div>
 
             <div>
-              <button className="bg-[#EF3340] md:w-full rounded-md py-[14px] px-4 uppercase text-white">
-                lo quiero{" "}
+              <button
+                onClick={formMonto}
+                className="bg-[#EF3340] md:w-full rounded-md py-[14px] px-4 uppercase text-white"
+              >
+                lo quiero
               </button>
             </div>
           </section>

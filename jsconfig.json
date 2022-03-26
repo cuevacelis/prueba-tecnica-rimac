@@ -5,6 +5,7 @@
     "paths": {
       "assets/*": ["./assets/*"],
       "components/*": ["./components/*"],
+      "contexts/*": ["./contexts/*"],
       "hooks/*": ["./hooks/*"],
       "layout/*": ["./layout/*"],
       "pages/*": ["./pages/*"],

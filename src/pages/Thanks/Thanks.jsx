@@ -1,4 +1,9 @@
-function ThanksPage(params) {
+import { useContext } from "react";
+import { UserContext } from "contexts/UserContext";
+
+function ThanksPage() {
+  const contextUser = useContext(UserContext);
+
   return (
     <section className="flex flex-col md:flex-row md:[height:calc(100vh_-_56px)]">
       <div className="flex flex-row w-full h-auto md:bg-[#f7f8fc] md:max-w-[408px] md:h-full">
@@ -24,7 +29,8 @@ function ThanksPage(params) {
           Enviaremos la confirmación de compra de tu Plan Vehícular Tracking a
           tu correo:
         </p>
-        <p className="pt-2">joel.sanchez@gmail.com</p>
+        <p className="pt-2">{contextUser.data.email}</p>
+        <p className="pt-2">{`Monto: $${contextUser.data.monto}`}</p>
         <div className="flex flex-row justify-center md:justify-start">
           <button className="uppercase py-[20px] px-10 text-white bg-[#EF3340] rounded-lg mt-10">
             cómo usar mi seguro

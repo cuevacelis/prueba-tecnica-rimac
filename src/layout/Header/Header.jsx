@@ -1,11 +1,15 @@
-function Header(params) {
+import { NavLink } from "react-router-dom";
+
+function Header() {
   return (
     <header className="flex flex-row justify-between items-center h-14 px-8 md:px-[120px]">
-      <img
-        className="w-[92px] h-4"
-        src="/recursos/navbar/logo_rimac.svg"
-        alt="logo rimac"
-      />
+      <NavLink to={"/"}>
+        <img
+          className="w-[92px] h-4"
+          src="/recursos/navbar/logo_rimac.svg"
+          alt="logo rimac"
+        />
+      </NavLink>
 
       <div className="flex flex-row gap-[23px]">
         <span className="hidden md:block">¿Tienes alguna duda?</span>
