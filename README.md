@@ -10,9 +10,7 @@ El proyeto usa las siguientes dependencias:
 
 - Sass: Con la finalidad de demostrar el conocimiento en la presente tecnologia junto con la metodologia BEM.
 
-- NextUI: Con la finalidad de usar algunos componentes y poder entregar el trabajo en el menor tiempo posible.
-
-- Helmet: Con la finalidad de agregar el titulo y las meta descripciones
+- Helmet: Con la finalidad de agregar el titulo y las meta descripciones.
 
 - RHF: Se uso react-hook-form con la finalidad de acelerar el tiempo de desarrollo en el formulario del login.
 
