@@ -9,8 +9,8 @@
       "hooks/*": ["./hooks/*"],
       "layout/*": ["./layout/*"],
       "pages/*": ["./pages/*"],
-      "services/*": ["./services/*"]
+      "services/*": ["./services/*"],
+      "styles/*": ["./styles/*"]
     }
-  },
-  "include": ["src"]
+  }
 }

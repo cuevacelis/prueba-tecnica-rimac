@@ -1,11 +1,16 @@
 import { useContext } from "react";
 import { UserContext } from "contexts/UserContext";
+import { Helmet } from "react-helmet";
 
 function ThanksPage() {
   const contextUser = useContext(UserContext);
 
   return (
     <section className="flex flex-col md:flex-row md:[height:calc(100vh_-_56px)]">
+      <Helmet>
+        <title>Thanks | RIMAC SEGUROS</title>
+      </Helmet>
+
       <div className="flex flex-row w-full h-auto md:bg-[#f7f8fc] md:max-w-[408px] md:h-full">
         <img
           className="w-full md:hidden"

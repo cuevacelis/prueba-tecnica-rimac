@@ -1,6 +1,8 @@
 import { useContext, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import { useNavigate, NavLink } from "react-router-dom";
 import { UserContext } from "contexts/UserContext";
+import Switch from "components/switch/Switch";
 import { ReactComponent as ArrowLeft } from "assets/pages/plan/arrow_left.svg";
 import { ReactComponent as ArrowUp } from "assets/pages/plan/arrow_up.svg";
 import { ReactComponent as ArrowDown } from "assets/pages/plan/arrow_down.svg";
@@ -8,13 +10,12 @@ import { ReactComponent as IconOne } from "assets/pages/plan/one.svg";
 import { ReactComponent as IconTwo } from "assets/pages/plan/two.svg";
 import { ReactComponent as IconAdd } from "assets/pages/plan/add.svg";
 import { ReactComponent as IconSubstract } from "assets/pages/plan/substract.svg";
-import { Switch } from "@nextui-org/react";
 
 function PlanPage() {
   const contextUser = useContext(UserContext);
-  let navigate = useNavigate();
-  const [sumaAsegurada, setSumaAsegurada] = useState(14300);
-  const [montoTotal, setMontoTotal] = useState(35);
+  const navigate = useNavigate();
+  const [sumAssured, setSumAssured] = useState(14300);
+  const [totalAmount, setTotalAmount] = useState(35);
   const refSwitchLlanta = useRef(true);
   const refSwitchChoque = useRef(false);
   const refSwitchAtropello = useRef(false);
@@ -27,69 +28,84 @@ function PlanPage() {
     }).format(number);
   };
 
-  const validateSwitchToque = () => {
-    if (refSwitchChoque.current) {
-      setMontoTotal(montoTotal - 20);
-      refSwitchChoque.current = false;
-    }
-  };
+  const changeSumAssured = (typeFunc) => {
+    const actionsSumAssured = {};
 
-  const substractSumaAgregada = () => {
-    if (sumaAsegurada > 12500) {
-      setSumaAsegurada(sumaAsegurada - 100);
-    }
-  };
-
-  const addSumaAgregada = () => {
-    if (sumaAsegurada < 16500) {
-      setSumaAsegurada(sumaAsegurada + 100);
-      if (sumaAsegurada >= 16000) {
-        validateSwitchToque();
+    actionsSumAssured.add = function () {
+      if (sumAssured < 16500) {
+        setSumAssured(sumAssured + 100);
+        if (sumAssured >= 16000 && refSwitchChoque.current) {
+          setTotalAmount(totalAmount - 20);
+          refSwitchChoque.current = false;
+        }
       }
-    }
+    };
+
+    actionsSumAssured.substract = function () {
+      if (sumAssured > 12500) {
+        setSumAssured(sumAssured - 100);
+      }
+    };
+
+    return actionsSumAssured[typeFunc]();
   };
 
-  const changeLLantaRobada = (e) => {
-    if (e.target.checked) {
-      refSwitchLlanta.current = true;
-      setMontoTotal(montoTotal + 15);
-    } else {
-      refSwitchLlanta.current = false;
-      setMontoTotal(montoTotal - 15);
-    }
+  const changeTotalAmount = (typeFunc, e) => {
+    const actionsTotalAmount = {};
+
+    actionsTotalAmount.actionLLantaRobada = function () {
+      if (e.target.checked) {
+        refSwitchLlanta.current = true;
+        setTotalAmount(totalAmount + 15);
+      } else {
+        refSwitchLlanta.current = false;
+        setTotalAmount(totalAmount - 15);
+      }
+    };
+
+    actionsTotalAmount.actionChoque = function () {
+      if (e.target.checked) {
+        refSwitchChoque.current = true;
+        setTotalAmount(totalAmount + 20);
+      } else {
+        refSwitchChoque.current = false;
+        setTotalAmount(totalAmount - 20);
+      }
+    };
+
+    actionsTotalAmount.actionAtropello = function () {
+      if (e.target.checked) {
+        refSwitchAtropello.current = true;
+        setTotalAmount(totalAmount + 50);
+      } else {
+        refSwitchAtropello.current = true;
+        setTotalAmount(totalAmount - 50);
+      }
+    };
+
+    return actionsTotalAmount[typeFunc]();
   };
 
-  const changeChoque = (e) => {
-    if (e.target.checked) {
-      refSwitchChoque.current = true;
-      setMontoTotal(montoTotal + 20);
-    } else {
-      refSwitchChoque.current = false;
-      setMontoTotal(montoTotal - 20);
-    }
-  };
-
-  const changeAtropello = (e) => {
-    if (e.target.checked) {
-      refSwitchAtropello.current = true;
-      setMontoTotal(montoTotal + 50);
-    } else {
-      refSwitchAtropello.current = true;
-      setMontoTotal(montoTotal - 50);
-    }
-  };
-
-  const formMonto = () => {
-    const newData = { ...contextUser.data, ...{ monto: montoTotal } };
-    contextUser.setData(newData);
+  const onSubmit = () => {
+    const newDataUserContext = {
+      ...contextUser.data,
+      monto: totalAmount,
+    };
+    contextUser.setData(newDataUserContext);
     navigate(`/thanks`);
   };
 
   return (
     <section className="flex flex-col md:flex-row">
-      <div className="md:bg-[#F7F8FC]">
+      <Helmet>
+        <title>Plan | RIMAC SEGUROS</title>
+      </Helmet>
+
+      <section className="md:bg-[#F7F8FC]">
         <div className="flex flex-row py-3 px-8 items-center justify-center gap-3 md:hidden">
-          <ArrowLeft />
+          <NavLink to="/">
+            <ArrowLeft />
+          </NavLink>
           <p className="text-[10px] leading-4 uppercase">paso 2 de 2</p>
           <span className="w-[176px] h-[6px] bg-[#6769FF] rounded-3xl"></span>
         </div>
@@ -105,10 +121,10 @@ function PlanPage() {
             <span className="text-[#494F66]">Arma tu plan</span>
           </p>
         </div>
-      </div>
+      </section>
 
-      <div className="flex flex-col md:flex-row">
-        <div className="max-w-[576px] md:px-24">
+      <section className="flex flex-col md:flex-row">
+        <div className="md:max-w-[576px] md:px-24">
           <section className="px-8 md:px-0 flex flex-col bg-[#F7F8FC] md:bg-white">
             <div className="mt-10">
               <h1 className="text-[28px] leading-9 tracking-[-0.6px]">
@@ -156,13 +172,19 @@ function PlanPage() {
             </div>
 
             <div className="rounded-lg min-w-[160px] h-14 flex flex-row justify-between items-center px-[19px] mt-4 md:mt-0 bg-white border border-solid border-[#C5CBE0] box-border">
-              <span onClick={substractSumaAgregada}>
+              <span
+                className="h-full flex flex-row items-center cursor-pointer"
+                onClick={() => changeSumAssured("substract")}
+              >
                 <IconSubstract />
               </span>
               <span className="text-base leading-6 text-[#494F66] py-4">
-                {formatNumberToDollar(sumaAsegurada, 0)}
+                {formatNumberToDollar(sumAssured, 0)}
               </span>
-              <span onClick={addSumaAgregada}>
+              <span
+                className="h-full flex flex-row items-center cursor-pointer"
+                onClick={() => changeSumAssured("add")}
+              >
                 <IconAdd />
               </span>
             </div>
@@ -172,14 +194,14 @@ function PlanPage() {
             <h2 className="mt-9 mb-10">Agrega o quita coberturas</h2>
 
             <ul className="flex flex-row items-center">
-              <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#EF3340] uppercase border-b-2 pb-6 border-red-500">
+              <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#EF3340] uppercase border-b-2 pb-6 border-red-500 cursor-pointer">
                 PROTEGE A <br /> TU AUTO
               </li>
-              <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#494F66] uppercase border-b-2 pb-6">
+              <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#494F66] uppercase border-b-2 pb-6 cursor-pointer">
                 PROTEGE A LOS
                 <br /> QUE TE RODEAN
               </li>
-              <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#494F66] uppercase border-b-2 pb-6">
+              <li className="text-center w-1/3 text-[10px] leading-4 tracking-[0.8px] text-[#494F66] uppercase border-b-2 pb-6 cursor-pointer">
                 MEJORA TU
                 <br /> PLAN
               </li>
@@ -197,7 +219,7 @@ function PlanPage() {
                     shadow
                     color="success"
                     checked={refSwitchLlanta.current}
-                    onChange={changeLLantaRobada}
+                    onChange={(e) => changeTotalAmount("actionLLantaRobada", e)}
                   />
                 </div>
               </div>
@@ -219,7 +241,7 @@ function PlanPage() {
               </div>
             </section>
 
-            {sumaAsegurada <= 16000 && (
+            {sumAssured <= 16000 && (
               <section className=" pt-9  pb-2 border-b">
                 <div className="flex flex-row gap-5">
                   <img
@@ -232,7 +254,7 @@ function PlanPage() {
                       shadow
                       color="success"
                       checked={refSwitchChoque.current}
-                      onChange={changeChoque}
+                      onChange={(e) => changeTotalAmount("actionChoque", e)}
                     />
                   </div>
                 </div>
@@ -261,7 +283,7 @@ function PlanPage() {
                     shadow
                     color="success"
                     checked={refSwitchAtropello.current}
-                    onChange={changeAtropello}
+                    onChange={(e) => changeTotalAmount("actionAtropello", e)}
                   />
                 </div>
               </div>
@@ -285,7 +307,7 @@ function PlanPage() {
                 monto
               </h3>
               <p className="text-[28px]">
-                {formatNumberToDollar(montoTotal, 2)}
+                {formatNumberToDollar(totalAmount, 2)}
               </p>
               <span className="uppercase md:lowercase text-[#676F8F]">
                 mensuales
@@ -311,7 +333,7 @@ function PlanPage() {
 
             <div>
               <button
-                onClick={formMonto}
+                onClick={onSubmit}
                 className="bg-[#EF3340] md:w-full rounded-md py-[14px] px-4 uppercase text-white"
               >
                 lo quiero
@@ -319,7 +341,7 @@ function PlanPage() {
             </div>
           </section>
         </div>
-      </div>
+      </section>
     </section>
   );
 }

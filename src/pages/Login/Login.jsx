@@ -3,53 +3,42 @@ import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { UserContext } from "contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { getUserById } from "services/user.services";
 import "./login.scss";
 
 function LoginPage() {
   const contextUser = useContext(UserContext);
-  let navigate = useNavigate();
-  const codeKeyDownPlaque = useRef(null);
+  const navigate = useNavigate();
+  const codeKeyPressPlaque = useRef(null);
 
   const {
     register: registerLogin,
-    reset: resetLogin,
     handleSubmit: handleSubmitLogin,
-    watch: watchLogin,
-    setError: setErrorLogin,
-    clearErrors: clearErrorsLogin,
     setValue: setValueLogin,
-    getValues: getValuesLogin,
     formState: { errors: errorsLogin },
   } = useForm({
     mode: "onSubmit",
-    reValidateMode: "onSubmit",
+    reValidateMode: "onChange",
     shouldUseNativeValidation: false,
   });
 
-  const fetchDataForm = async (data) => {
-    const response = await fetch(
-      "https://jsonplaceholder.typicode.com/users/1",
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    const resp = await response.json();
-    const res = { ...resp, ...data };
-    contextUser.setData(res);
-    navigate(`/plan`);
+  const normalizePlaque = (e) => {
+    const plaque = e.target.value.toUpperCase();
+    const codeKeyPress = codeKeyPressPlaque.current;
+    setValueLogin("plaque", plaque);
+
+    if (plaque.length === 3 && codeKeyPress !== "Backspace") {
+      setValueLogin("plaque", `${plaque}-`);
+    } else if (plaque.length === 3 && codeKeyPress === "Backspace") {
+      setValueLogin("plaque", `${plaque.slice(0, 2)}`);
+    }
   };
 
-  const normalizePlaque = (e) => {
-    const placa = e.target.value.toUpperCase();
-    const codeKeyPress = codeKeyDownPlaque.current;
-    setValueLogin("plaque", placa);
-
-    if (placa.length === 3 && codeKeyPress !== "Backspace") {
-      setValueLogin("plaque", `${placa}-`);
-    } else if (placa.length === 3 && codeKeyPress === "Backspace") {
-      setValueLogin("plaque", `${placa.slice(0, 2)}`);
-    }
+  const onSubmit = async (dataForm) => {
+    const respFetchUser = await getUserById(1);
+    const newDataUserContext = { ...respFetchUser, ...dataForm };
+    contextUser.setData(newDataUserContext);
+    navigate(`/plan`);
   };
 
   return (
@@ -59,7 +48,7 @@ function LoginPage() {
       </Helmet>
 
       <div className="w-full flex flex-col items-center md:max-w-[535px]">
-        <aside className="absolute top-0 left-0 w-full h-[308px] -z-10 bg-cover bg-[#f7f8fc] md:max-w-[535px] md:h-full md:bg-[url('./assets/pages/login/background_desktop_rimac.svg')]"></aside>
+        <aside className="absolute top-0 left-0 w-full h-[308px] -z-10 bg-cover bg-[#f7f8fc] md:max-w-[535px] md:h-full md:bg-[url('/src/assets/pages/login/background_desktop_rimac.svg)]"></aside>
         <img
           className="hidden md:block w-80 h-[250px] mt-14"
           src="/recursos/pages/login/home_desktop_rimac.svg"
@@ -96,7 +85,7 @@ function LoginPage() {
             Déjanos tus datos
           </h2>
 
-          <form className="login" onSubmit={handleSubmitLogin(fetchDataForm)}>
+          <form className="login" onSubmit={handleSubmitLogin(onSubmit)}>
             <section className="login__inputs">
               <div className="login__inputs_element">
                 <section
@@ -185,7 +174,7 @@ function LoginPage() {
                     maxLength="7"
                     autoComplete="off"
                     placeholder="Placa"
-                    onKeyDown={(e) => (codeKeyDownPlaque.current = e.code)}
+                    onKeyDown={(e) => (codeKeyPressPlaque.current = e.code)}
                     {...registerLogin("plaque", {
                       required: {
                         value: true,
